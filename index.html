@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Indian Government Jobs Photo & Signature Size Converter | SSC RRB UPSC IBPS NTA</title>
+  <meta name="description" content="Free online tool to resize photo and signature for SSC, RRB, UPSC, IBPS, NTA, WBPSC government job exams. Exact official size, KB limit and DPI. Perfect for cyber cafes and job aspirants." />
+  <meta name="keywords" content="SSC photo size, RRB signature size, UPSC photo requirements, IBPS photo signature, NTA passport photo, government job photo size India, cyber cafe photo tool, photo signature converter" />
+  <meta name="author" content="Joy Maity" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://jmaity434.github.io/india-govt-jobs-photo-signature-tool/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Indian Govt Jobs Photo & Signature Converter" />
+  <meta property="og:description" content="Free client-side tool + complete official specs for SSC, RRB, UPSC, IBPS, NTA exams." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://jmaity434.github.io/india-govt-jobs-photo-signature-tool/" />
+
+  <!-- Structured Data for AI & Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Indian Government Jobs Photo & Signature Converter",
+    "description": "Free online tool and complete database of official photo and signature size requirements for SSC, RRB, UPSC, IBPS, NTA and WBPSC exams.",
+    "url": "https://jmaity434.github.io/india-govt-jobs-photo-signature-tool/",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "INR"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Joy Maity"
+    },
+    "keywords": "SSC photo size, RRB signature, UPSC photo, IBPS photo signature, NTA photo size, government job form photo"
+  }
+  </script>
+
+  <style>
+    :root {
+      --primary: #0f172a;
+      --accent: #f59e0b;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    header h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    header p { opacity: 0.9; max-width: 700px; margin: 0 auto; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem; }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    h2 { font-size: 1.35rem; margin-bottom: 1rem; color: var(--primary); }
+    h3 { font-size: 1.1rem; margin: 1rem 0 0.5rem; }
+    select, button, input[type="file"] {
+      font-size: 1rem;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    select { width: 100%; max-width: 400px; background: white; }
+    button {
+      background: var(--accent);
+      color: #000;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(245,158,11,0.35); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+    .preview-box {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+      overflow: hidden;
+    }
+    .preview-box img { max-width: 100%; max-height: 280px; }
+    .specs-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    .specs-table th, .specs-table td {
+      padding: 0.6rem 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .specs-table th { background: #f1f5f9; font-weight: 600; }
+    .badge {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .success { color: var(--success); font-weight: 600; }
+    .note { font-size: 0.9rem; color: var(--muted); margin-top: 0.5rem; }
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .lang-toggle { margin-top: 0.8rem; }
+    .lang-toggle button {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.4);
+      margin: 0 0.3rem;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.85rem;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="title">Indian Govt Jobs Photo & Signature Tool</h1>
+    <p id="subtitle">Official size, format & KB limits for SSC • RRB • UPSC • IBPS • NTA • WBPSC — Free client-side converter</p>
+    <div class="lang-toggle">
+      <button onclick="setLang('en')">English</button>
+      <button onclick="setLang('bn')">বাংলা</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Converter Card -->
+    <div class="card">
+      <h2 id="converter-title">📸 Photo / Signature Converter</h2>
+      <p class="note" id="converter-note">Everything runs in your browser. No image is uploaded to any server.</p>
+
+      <div style="margin: 1rem 0;">
+        <label for="boardSelect"><strong id="label-board">Select Exam Board:</strong></label><br />
+        <select id="boardSelect" style="margin-top:0.4rem;"></select>
+      </div>
+
+      <div style="margin: 1rem 0;">
+        <label for="docSelect"><strong id="label-doc">Document Type:</strong></label><br />
+        <select id="docSelect" style="margin-top:0.4rem;"></select>
+      </div>
+
+      <div id="targetInfo" class="note" style="margin-bottom:1rem;"></div>
+
+      <div class="grid">
+        <div>
+          <label><strong id="label-upload">Upload Image:</strong></label><br />
+          <input type="file" id="fileInput" accept="image/*" style="margin-top:0.4rem; width:100%;" />
+          <div class="preview-box" id="originalPreview" style="margin-top:0.8rem;">
+            <span style="color:#94a3b8;">Original preview</span>
+          </div>
+        </div>
+        <div>
+          <label><strong id="label-result">Result:</strong></label>
+          <div class="preview-box" id="resultPreview" style="margin-top:0.4rem;">
+            <span style="color:#94a3b8;">Processed image will appear here</span>
+          </div>
+          <div id="resultMeta" class="note" style="margin-top:0.5rem;"></div>
+          <button id="downloadBtn" disabled style="margin-top:0.8rem; width:100%;">⬇️ Download Ready Image</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Specs Database -->
+    <div class="card">
+      <h2 id="specs-title">📚 Complete Official Specifications Database</h2>
+      <div id="specsContainer"></div>
+    </div>
+
+    <div class="card">
+      <h2>💡 Tips for Perfect Upload</h2>
+      <ul style="padding-left:1.2rem; color:var(--muted);">
+        <li>Use recent photo with plain light / white background</li>
+        <li>Signature should be clear, not in CAPITAL letters (except where allowed)</li>
+        <li>Always check final file size in KB before uploading to the portal</li>
+        <li>This tool automatically adjusts quality to meet the exact KB range</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <p>Free tool for Indian job aspirants & cyber cafes • Data from official notifications • MIT License</p>
+    <p>Maintained by <a href="https://github.com/Jmaity434" style="color:var(--accent);">Joy Maity</a> • <a href="https://github.com/Jmaity434/india-govt-jobs-photo-signature-tool" style="color:var(--accent);">View on GitHub</a></p>
+  </footer>
+
+  <script>
+    let specsData = null;
+    let currentLang = 'en';
+    let processedBlob = null;
+
+    const translations = {
+      en: {
+        title: "Indian Govt Jobs Photo & Signature Tool",
+        subtitle: "Official size, format & KB limits for SSC • RRB • UPSC • IBPS • NTA • WBPSC — Free client-side converter",
+        "converter-title": "📸 Photo / Signature Converter",
+        "converter-note": "Everything runs in your browser. No image is uploaded to any server.",
+        "label-board": "Select Exam Board:",
+        "label-doc": "Document Type:",
+        "label-upload": "Upload Image:",
+        "label-result": "Result:",
+        "specs-title": "📚 Complete Official Specifications Database"
+      },
+      bn: {
+        title: "ভারতীয় সরকারি চাকরির ছবি ও স্বাক্ষর টুল",
+        subtitle: "SSC • RRB • UPSC • IBPS • NTA • WBPSC এর অফিসিয়াল সাইজ, ফরম্যাট ও KB লিমিট — সম্পূর্ণ ফ্রি কনভার্টার",
+        "converter-title": "📸 ছবি / স্বাক্ষর কনভার্টার",
+        "converter-note": "সব কিছু আপনার ব্রাউজারেই চলে। কোনো ছবি সার্ভারে আপলোড হয় না।",
+        "label-board": "পরীক্ষা বোর্ড বেছে নিন:",
+        "label-doc": "ডকুমেন্ট টাইপ:",
+        "label-upload": "ছবি আপলোড করুন:",
+        "label-result": "ফলাফল:",
+        "specs-title": "📚 সম্পূর্ণ অফিসিয়াল স্পেসিফিকেশন ডাটাবেস"
+      }
+    };
+
+    function setLang(lang) {
+      currentLang = lang;
+      const t = translations[lang];
+      document.getElementById('title').textContent = t.title;
+      document.getElementById('subtitle').textContent = t.subtitle;
+      document.getElementById('converter-title').textContent = t["converter-title"];
+      document.getElementById('converter-note').textContent = t["converter-note"];
+      document.getElementById('label-board').textContent = t["label-board"];
+      document.getElementById('label-doc').textContent = t["label-doc"];
+      document.getElementById('label-upload').textContent = t["label-upload"];
+      document.getElementById('label-result').textContent = t["label-result"];
+      document.getElementById('specs-title').textContent = t["specs-title"];
+    }
+
+    async function loadSpecs() {
+      const res = await fetch('data/specs.json');
+      specsData = await res.json();
+      populateBoards();
+      renderSpecs();
+    }
+
+    function populateBoards() {
+      const sel = document.getElementById('boardSelect');
+      sel.innerHTML = '';
+      specsData.boards.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b.id;
+        opt.textContent = b.name;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener('change', populateDocs);
+      populateDocs();
+    }
+
+    function populateDocs() {
+      const boardId = document.getElementById('boardSelect').value;
+      const board = specsData.boards.find(b => b.id === boardId);
+      const sel = document.getElementById('docSelect');
+      sel.innerHTML = '';
+      Object.keys(board.documents).forEach(key => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        sel.appendChild(opt);
+      });
+      sel.addEventListener('change', updateTargetInfo);
+      updateTargetInfo();
+    }
+
+    function updateTargetInfo() {
+      const boardId = document.getElementById('boardSelect').value;
+      const docKey = document.getElementById('docSelect').value;
+      const doc = specsData.boards.find(b => b.id === boardId).documents[docKey];
+      let html = `<span class="badge">${doc.format ? doc.format.join('/').toUpperCase() : 'JPG'}</span> `;
+      if (doc.target_width_px && doc.target_height_px) {
+        html += `Target: <strong>${doc.target_width_px} × ${doc.target_height_px} px</strong> `;
+      }
+      if (doc.min_size_kb !== undefined) {
+        html += `| Size: <strong>${doc.min_size_kb}–${doc.max_size_kb} KB</strong>`;
+      }
+      if (doc.notes) html += `<br><span class="note">${doc.notes}</span>`;
+      document.getElementById('targetInfo').innerHTML = html;
+    }
+
+    function renderSpecs() {
+      const container = document.getElementById('specsContainer');
+      container.innerHTML = '';
+      specsData.boards.forEach(board => {
+        const section = document.createElement('div');
+        section.style.marginBottom = '1.5rem';
+        section.innerHTML = `<h3>${board.name}</h3>`;
+        const table = document.createElement('table');
+        table.className = 'specs-table';
+        table.innerHTML = `<thead><tr><th>Document</th><th>Format</th><th>Size (KB)</th><th>Pixels</th><th>Notes</th></tr></thead><tbody></tbody>`;
+        const tbody = table.querySelector('tbody');
+        Object.entries(board.documents).forEach(([key, doc]) => {
+          const tr = document.createElement('tr');
+          const px = doc.target_width_px ? `${doc.target_width_px}×${doc.target_height_px}` :
+                     (doc.min_width_px ? `${doc.min_width_px}–${doc.max_width_px} (square)` : '—');
+          tr.innerHTML = `
+            <td>${key.replace(/_/g,' ')}</td>
+            <td>${(doc.format||['jpg']).join(', ').toUpperCase()}</td>
+            <td>${doc.min_size_kb || '—'} – ${doc.max_size_kb || '—'}</td>
+            <td>${px}</td>
+            <td>${doc.notes || '—'}</td>`;
+          tbody.appendChild(tr);
+        });
+        section.appendChild(table);
+        container.appendChild(section);
+      });
+    }
+
+    // ===== Image Processing (Canvas API + Quality Loop) =====
+    document.getElementById('fileInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      await img.decode();
+
+      // Show original
+      const origBox = document.getElementById('originalPreview');
+      origBox.innerHTML = '';
+      const origImg = document.createElement('img');
+      origImg.src = img.src;
+      origBox.appendChild(origImg);
+
+      // Process
+      const boardId = document.getElementById('boardSelect').value;
+      const docKey = document.getElementById('docSelect').value;
+      const doc = specsData.boards.find(b => b.id === boardId).documents[docKey];
+
+      let targetW = doc.target_width_px || 400;
+      let targetH = doc.target_height_px || 500;
+
+      // For UPSC square
+      if (doc.square) {
+        const size = Math.min(Math.max(doc.min_width_px || 350, 500), doc.max_width_px || 1000);
+        targetW = targetH = size;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext('2d');
+
+      // Draw with cover / contain logic (center crop)
+      const scale = Math.max(targetW / img.width, targetH / img.height);
+      const x = (targetW / 2) - (img.width / 2) * scale;
+      const y = (targetH / 2) - (img.height / 2) * scale;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, targetW, targetH);
+      ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+      // Quality iteration loop to meet KB range
+      const minKB = doc.min_size_kb || 10;
+      const maxKB = doc.max_size_kb || 100;
+      let quality = 0.92;
+      let blob = null;
+
+      for (let i = 0; i < 20; i++) {
+        blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+        const sizeKB = blob.size / 1024;
+        if (sizeKB > maxKB) {
+          quality -= 0.05;
+          if (quality < 0.1) break;
+        } else if (sizeKB < minKB && quality < 0.95) {
+          quality += 0.03;
+        } else {
+          break;
+        }
+      }
+
+      processedBlob = blob;
+      const resultURL = URL.createObjectURL(blob);
+      const resultBox = document.getElementById('resultPreview');
+      resultBox.innerHTML = '';
+      const resImg = document.createElement('img');
+      resImg.src = resultURL;
+      resultBox.appendChild(resImg);
+
+      const sizeKB = (blob.size / 1024).toFixed(1);
+      document.getElementById('resultMeta').innerHTML = `
+        <span class="success">✓ Ready</span> — ${targetW}×${targetH} px | ${sizeKB} KB | quality≈${(quality*100).toFixed(0)}%
+      `;
+      document.getElementById('downloadBtn').disabled = false;
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      if (!processedBlob) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(processedBlob);
+      const board = document.getElementById('boardSelect').selectedOptions[0].text.split('(')[0].trim();
+      const doc = document.getElementById('docSelect').value;
+      a.download = `${board}_${doc}_ready.jpg`;
+      a.click();
+    });
+
+    loadSpecs();
+  </script>
+</body>
+</html>
