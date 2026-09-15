@@ -1,8 +1,8 @@
 /**
  * Indian Govt Exam Image Cropper & Resizer
- * Optimized Canvas rendering + Binary quality loop + Zoom/Pan
+ * - Hero capital image updates on board select
+ * - Canvas performance: CSS transform3d, rAF, reusable canvas, createImageBitmap
  */
-
 (function () {
   'use strict';
 
@@ -15,12 +15,13 @@
   let isDragging = false;
   let lastPos = { x: 0, y: 0 };
   let processedBlob = null;
-  let sourceImage = null; // HTMLImageElement kept for canvas draws
+  let sourceImage = null;
+  let sourceBitmap = null; // createImageBitmap for faster canvas draw
   let rafPending = false;
+  let processCanvas = null; // reusable off-DOM canvas
 
   const $ = (id) => document.getElementById(id);
 
-  // ---------- DOM refs ----------
   const boardSelect = $('boardSelect');
   const docSelect = $('docSelect');
   const fileInput = $('fileInput');
@@ -38,17 +39,56 @@
   const nameInput = $('candidateName');
   const dateInput = $('photoDate');
   const nameDateCheck = $('enableNameDate');
-  const backdrop = $('dynamic-city-backdrop');
-  const cityCaption = $('backdrop-city-caption');
+  const heroImage = $('heroImage');
+  const heroBoardName = $('heroBoardName');
+  const heroCapitalName = $('heroCapitalName');
 
-  // ---------- Init Board Dropdown ----------
+  // Curated high-quality Unsplash images per capital (reliable direct URLs)
+  const CAPITAL_IMAGES = {
+    'New Delhi': 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=70',
+    'Mumbai': 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=1600&q=70',
+    'Amaravati': 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=70',
+    'Itanagar': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
+    'Dispur (Guwahati)': 'https://images.unsplash.com/photo-1596402185679-9d8f0f5b0b0b?auto=format&fit=crop&w=1600&q=70',
+    'Patna': 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1600&q=70',
+    'Raipur': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
+    'Panaji': 'https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=70',
+    'Gandhinagar': 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1600&q=70',
+    'Chandigarh': 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=70',
+    'Shimla': 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=70',
+    'Ranchi': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
+    'Bengaluru': 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=1600&q=70',
+    'Thiruvananthapuram': 'https://images.unsplash.com/photo-1602216056335-c1aab87b0a48?auto=format&fit=crop&w=1600&q=70',
+    'Bhopal': 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=70',
+    'Imphal': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
+    'Shillong': 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=70',
+    'Aizawl': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
+    'Kohima': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
+    'Bhubaneswar': 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=70',
+    'Jaipur': 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1600&q=70',
+    'Gangtok': 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=70',
+    'Chennai': 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=70',
+    'Hyderabad': 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=1600&q=70',
+    'Agartala': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
+    'Lucknow': 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1600&q=70',
+    'Dehradun': 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=70',
+    'Kolkata': 'https://images.unsplash.com/photo-1558431382-27e303142255?auto=format&fit=crop&w=1600&q=70',
+    'Srinagar': 'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1600&q=70',
+    'Leh': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
+    'Pondicherry': 'https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=70',
+    'Port Blair': 'https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=70',
+    'Daman': 'https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=70',
+    'Kavaratti': 'https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=70'
+  };
+  const FALLBACK_HERO = 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=70';
+
+  // ---------- Board dropdown ----------
   function buildBoardOptions() {
     boardSelect.innerHTML = '';
 
-    // Central group
     const centralGroup = document.createElement('optgroup');
     centralGroup.label = 'Central Government';
-    Object.entries(RECRUITMENT_REGISTRY.central).forEach(([id, board]) => {
+    Object.entries(RECRUITMENT_REGISTRY.central).forEach(function ([id, board]) {
       const opt = document.createElement('option');
       opt.value = 'central:' + id;
       opt.textContent = board.name;
@@ -56,12 +96,11 @@
     });
     boardSelect.appendChild(centralGroup);
 
-    // States group
     const stateGroup = document.createElement('optgroup');
     stateGroup.label = 'State PSC / Recruitment Boards';
     Object.entries(RECRUITMENT_REGISTRY.states)
-      .sort((a, b) => a[1].name.localeCompare(b[1].name))
-      .forEach(([id, entry]) => {
+      .sort(function (a, b) { return a[1].name.localeCompare(b[1].name); })
+      .forEach(function ([id, entry]) {
         const opt = document.createElement('option');
         opt.value = 'state:' + id;
         opt.textContent = entry.name;
@@ -69,10 +108,9 @@
       });
     boardSelect.appendChild(stateGroup);
 
-    // UTs group
     const utGroup = document.createElement('optgroup');
     utGroup.label = 'Union Territories';
-    Object.entries(RECRUITMENT_REGISTRY.uts).forEach(([id, entry]) => {
+    Object.entries(RECRUITMENT_REGISTRY.uts).forEach(function ([id, entry]) {
       const opt = document.createElement('option');
       opt.value = 'ut:' + id;
       opt.textContent = entry.name;
@@ -85,7 +123,9 @@
   }
 
   function resolveBoard(value) {
-    const [type, id] = value.split(':');
+    var parts = value.split(':');
+    var type = parts[0];
+    var id = parts[1];
     if (type === 'central') return RECRUITMENT_REGISTRY.central[id];
     if (type === 'state') return normalizeStateSpec(RECRUITMENT_REGISTRY.states[id]);
     if (type === 'ut') return normalizeStateSpec(RECRUITMENT_REGISTRY.uts[id]);
@@ -96,19 +136,41 @@
     currentBoard = resolveBoard(boardSelect.value);
     if (!currentBoard) return;
 
-    // Populate document types
+    // Update HERO image + captions
+    updateHero(currentBoard);
+
+    // Document types
     docSelect.innerHTML = '';
-    Object.keys(currentBoard.specs).forEach((key) => {
-      const opt = document.createElement('option');
+    Object.keys(currentBoard.specs).forEach(function (key) {
+      var opt = document.createElement('option');
       opt.value = key;
       opt.textContent = currentBoard.specs[key].label || key.replace(/_/g, ' ');
       docSelect.appendChild(opt);
     });
     docSelect.onchange = updateCurrentSpec;
     updateCurrentSpec();
+  }
 
-    // Dynamic capital backdrop
-    updateDynamicCapitalBackdrop(currentBoard.capitalQuery, currentBoard.capitalName);
+  function updateHero(board) {
+    var capital = board.capitalName || 'India';
+    var url = CAPITAL_IMAGES[capital] || FALLBACK_HERO;
+
+    heroBoardName.textContent = board.name;
+    heroCapitalName.textContent = 'Capital perspective: ' + capital;
+
+    if (heroImage.src.indexOf(url.split('?')[0]) !== -1) return; // already showing
+
+    heroImage.classList.add('is-loading');
+    var preloader = new Image();
+    preloader.onload = function () {
+      heroImage.src = url;
+      heroImage.classList.remove('is-loading');
+    };
+    preloader.onerror = function () {
+      heroImage.src = FALLBACK_HERO;
+      heroImage.classList.remove('is-loading');
+    };
+    preloader.src = url;
   }
 
   function updateCurrentSpec() {
@@ -116,24 +178,20 @@
     currentSpec = currentBoard.specs[currentDocKey];
     if (!currentSpec) return;
 
-    // Aspect ratio of viewport
     cropViewport.style.aspectRatio = currentSpec.width + ' / ' + currentSpec.height;
 
-    // Target info
     targetInfo.innerHTML =
       '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">JPG</span> ' +
       '<strong class="ml-1">' + currentSpec.width + ' \u00d7 ' + currentSpec.height + ' px</strong>' +
       ' <span class="mx-1 text-slate-400">|</span> ' +
       '<strong>' + currentSpec.minKb + ' \u2013 ' + currentSpec.maxKb + ' KB</strong>';
 
-    // Requirements list
     reqList.innerHTML =
       '<li>Format: <strong>JPG / JPEG</strong></li>' +
       '<li>Dimensions: <strong>' + currentSpec.width + ' \u00d7 ' + currentSpec.height + ' px</strong></li>' +
       '<li>File size: <strong>' + currentSpec.minKb + ' \u2013 ' + currentSpec.maxKb + ' KB</strong></li>' +
       (currentSpec.allowNameDate ? '<li class="text-amber-700">Name &amp; Date stamp available</li>' : '');
 
-    // Name/Date section visibility
     if (currentSpec.allowNameDate) {
       nameDateSection.classList.remove('hidden');
       nameDateCheck.checked = true;
@@ -147,68 +205,57 @@
     resultMeta.textContent = '';
   }
 
-  // ---------- Dynamic Backdrop ----------
-  function updateDynamicCapitalBackdrop(query, capitalName) {
-    if (!backdrop) return;
-    const fallback = 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1920&q=60';
-    const url = 'https://source.unsplash.com/1920x1080/?' + encodeURIComponent(query || 'india,architecture');
-
-    const preloader = new Image();
-    preloader.onload = function () {
-      backdrop.style.backgroundImage =
-        'linear-gradient(rgba(15,23,42,0.88), rgba(15,23,42,0.92)), url("' + url + '")';
-    };
-    preloader.onerror = function () {
-      backdrop.style.backgroundImage =
-        'linear-gradient(rgba(15,23,42,0.90), rgba(15,23,42,0.94)), url("' + fallback + '")';
-    };
-    preloader.src = url;
-
-    if (cityCaption) {
-      cityCaption.textContent = 'Capital perspective: ' + (capitalName || 'India');
-    }
-  }
-
-  // ---------- Image load ----------
+  // ---------- Image load (with createImageBitmap for faster later draws) ----------
   fileInput.addEventListener('change', function (e) {
-    const file = e.target.files[0];
+    var file = e.target.files[0];
     if (!file) return;
 
-    const url = URL.createObjectURL(file);
-    const img = new Image();
+    var url = URL.createObjectURL(file);
+    var img = new Image();
     img.onload = function () {
       sourceImage = img;
       imgNatural = { w: img.naturalWidth, h: img.naturalHeight };
+
+      // Prefer ImageBitmap for faster canvas transfer
+      if (typeof createImageBitmap === 'function') {
+        createImageBitmap(img).then(function (bmp) {
+          if (sourceBitmap) sourceBitmap.close();
+          sourceBitmap = bmp;
+        }).catch(function () { sourceBitmap = null; });
+      }
+
       cropImage.src = url;
       cropImage.style.display = 'block';
       emptyState.style.display = 'none';
       zoomSlider.disabled = false;
       processBtn.disabled = false;
 
-      // Cover fit
-      const vpW = cropViewport.clientWidth;
-      const vpH = cropViewport.clientHeight;
-      const scale = Math.max(vpW / imgNatural.w, vpH / imgNatural.h);
+      var vpW = cropViewport.clientWidth;
+      var vpH = cropViewport.clientHeight;
+      var scale = Math.max(vpW / imgNatural.w, vpH / imgNatural.h);
       transform = { scale: scale, x: 0, y: 0 };
-      zoomSlider.value = scale;
-      zoomSlider.min = Math.max(0.3, scale * 0.4);
-      zoomSlider.max = Math.max(4, scale * 3);
+      zoomSlider.min = String(Math.max(0.25, scale * 0.35));
+      zoomSlider.max = String(Math.max(4, scale * 3));
+      zoomSlider.value = String(scale);
       scheduleTransform();
     };
     img.src = url;
   });
 
-  // ---------- Transform (rAF optimized) ----------
+  // ---------- Transform via CSS translate3d + scale (GPU) ----------
   function applyTransform() {
-    const vpW = cropViewport.clientWidth;
-    const vpH = cropViewport.clientHeight;
-    const displayW = imgNatural.w * transform.scale;
-    const displayH = imgNatural.h * transform.scale;
+    var vpW = cropViewport.clientWidth;
+    var vpH = cropViewport.clientHeight;
+    var displayW = imgNatural.w * transform.scale;
+    var displayH = imgNatural.h * transform.scale;
+
+    // Center + pan offset
+    var tx = (vpW - displayW) / 2 + transform.x;
+    var ty = (vpH - displayH) / 2 + transform.y;
 
     cropImage.style.width = displayW + 'px';
     cropImage.style.height = displayH + 'px';
-    cropImage.style.left = (vpW / 2 - displayW / 2 + transform.x) + 'px';
-    cropImage.style.top = (vpH / 2 - displayH / 2 + transform.y) + 'px';
+    cropImage.style.transform = 'translate3d(' + tx + 'px,' + ty + 'px,0)';
     rafPending = false;
   }
 
@@ -261,18 +308,18 @@
   cropViewport.addEventListener('wheel', function (e) {
     if (!sourceImage) return;
     e.preventDefault();
-    const delta = e.deltaY > 0 ? -0.06 : 0.06;
-    const min = parseFloat(zoomSlider.min);
-    const max = parseFloat(zoomSlider.max);
+    var delta = e.deltaY > 0 ? -0.06 : 0.06;
+    var min = parseFloat(zoomSlider.min);
+    var max = parseFloat(zoomSlider.max);
     transform.scale = Math.min(max, Math.max(min, transform.scale + delta));
-    zoomSlider.value = transform.scale;
+    zoomSlider.value = String(transform.scale);
     scheduleTransform();
   }, { passive: false });
 
   // ---------- Name & Date stamp ----------
   function applyCandidateNameDateStamp(ctx, width, height, candidateName, photoDate) {
-    const bannerHeight = Math.floor(height * 0.18);
-    const bannerY = height - bannerHeight;
+    var bannerHeight = Math.floor(height * 0.18);
+    var bannerY = height - bannerHeight;
 
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, bannerY, width, bannerHeight);
@@ -288,8 +335,8 @@
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    const nameFontSize = Math.max(11, Math.floor(bannerHeight * 0.32));
-    const dateFontSize = Math.max(9, Math.floor(bannerHeight * 0.26));
+    var nameFontSize = Math.max(11, Math.floor(bannerHeight * 0.32));
+    var dateFontSize = Math.max(9, Math.floor(bannerHeight * 0.26));
 
     ctx.font = 'bold ' + nameFontSize + 'px system-ui, -apple-system, sans-serif';
     ctx.fillText((candidateName || 'CANDIDATE NAME').toUpperCase(), width / 2, bannerY + bannerHeight * 0.35);
@@ -298,81 +345,76 @@
     ctx.fillText('Photo Date: ' + (photoDate || 'DD/MM/YYYY'), width / 2, bannerY + bannerHeight * 0.72);
   }
 
-  // ---------- Binary quality loop (optimized) ----------
+  // ---------- Binary quality loop ----------
   async function generateCompliantImageBlob(canvas, minKb, maxKb) {
-    let low = 0.08;
-    let high = 0.98;
-    let bestBlob = null;
-    let bestDiff = Infinity;
-    const maxAttempts = 12;
+    var low = 0.08;
+    var high = 0.98;
+    var bestBlob = null;
+    var bestDiff = Infinity;
+    var maxAttempts = 12;
 
-    for (let i = 0; i < maxAttempts; i++) {
-      const q = (low + high) / 2;
-      const blob = await new Promise(function (resolve) {
+    for (var i = 0; i < maxAttempts; i++) {
+      var q = (low + high) / 2;
+      var blob = await new Promise(function (resolve) {
         canvas.toBlob(resolve, 'image/jpeg', q);
       });
-      const sizeKb = blob.size / 1024;
+      var sizeKb = blob.size / 1024;
 
-      if (sizeKb >= minKb && sizeKb <= maxKb) {
-        return blob; // exact hit
-      }
+      if (sizeKb >= minKb && sizeKb <= maxKb) return blob;
 
-      const diff = sizeKb > maxKb ? sizeKb - maxKb : minKb - sizeKb;
+      var diff = sizeKb > maxKb ? sizeKb - maxKb : minKb - sizeKb;
       if (diff < bestDiff) {
         bestDiff = diff;
         bestBlob = blob;
       }
 
-      if (sizeKb > maxKb) {
-        high = q;
-      } else {
-        low = q;
-      }
+      if (sizeKb > maxKb) high = q;
+      else low = q;
     }
     return bestBlob;
   }
 
-  // ---------- Process ----------
+  // ---------- Process (optimized canvas path) ----------
   processBtn.addEventListener('click', async function () {
     if (!sourceImage || !currentSpec) return;
 
     processBtn.disabled = true;
     processBtn.textContent = 'Processing...';
 
-    const tw = currentSpec.width;
-    const th = currentSpec.height;
+    var tw = currentSpec.width;
+    var th = currentSpec.height;
 
-    // Use high-quality canvas settings
-    const canvas = document.createElement('canvas');
-    canvas.width = tw;
-    canvas.height = th;
-    const ctx = canvas.getContext('2d', { alpha: false }); // opaque = faster
+    // Reuse a single off-DOM canvas
+    if (!processCanvas) {
+      processCanvas = document.createElement('canvas');
+    }
+    processCanvas.width = tw;
+    processCanvas.height = th;
 
-    // Performance hints
+    var ctx = processCanvas.getContext('2d', { alpha: false });
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
-    // White background (critical for signatures)
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, tw, th);
 
-    // Map visible viewport region back to natural image coordinates
-    const vpW = cropViewport.clientWidth;
-    const vpH = cropViewport.clientHeight;
-    const scale = transform.scale;
-    const displayW = imgNatural.w * scale;
-    const displayH = imgNatural.h * scale;
-    const imgLeft = vpW / 2 - displayW / 2 + transform.x;
-    const imgTop = vpH / 2 - displayH / 2 + transform.y;
+    var vpW = cropViewport.clientWidth;
+    var vpH = cropViewport.clientHeight;
+    var scale = transform.scale;
+    var displayW = imgNatural.w * scale;
+    var displayH = imgNatural.h * scale;
+    var imgLeft = (vpW - displayW) / 2 + transform.x;
+    var imgTop = (vpH - displayH) / 2 + transform.y;
 
-    const sx = (0 - imgLeft) / scale;
-    const sy = (0 - imgTop) / scale;
-    const sWidth = vpW / scale;
-    const sHeight = vpH / scale;
+    var sx = (0 - imgLeft) / scale;
+    var sy = (0 - imgTop) / scale;
+    var sWidth = vpW / scale;
+    var sHeight = vpH / scale;
 
-    ctx.drawImage(sourceImage, sx, sy, sWidth, sHeight, 0, 0, tw, th);
+    // Prefer ImageBitmap when available (faster GPU upload)
+    var drawSource = sourceBitmap || sourceImage;
+    ctx.drawImage(drawSource, sx, sy, sWidth, sHeight, 0, 0, tw, th);
 
-    // Optional Name & Date stamp
     if (currentSpec.allowNameDate && nameDateCheck.checked) {
       applyCandidateNameDateStamp(
         ctx, tw, th,
@@ -381,21 +423,20 @@
       );
     }
 
-    // Binary search compression
-    const blob = await generateCompliantImageBlob(canvas, currentSpec.minKb, currentSpec.maxKb);
+    var blob = await generateCompliantImageBlob(processCanvas, currentSpec.minKb, currentSpec.maxKb);
     processedBlob = blob;
 
-    const sizeKb = (blob.size / 1024).toFixed(1);
-    const url = URL.createObjectURL(blob);
+    var sizeKb = (blob.size / 1024).toFixed(1);
+    var url = URL.createObjectURL(blob);
 
     resultPreview.innerHTML = '';
-    const outImg = document.createElement('img');
+    var outImg = document.createElement('img');
     outImg.src = url;
     outImg.alt = 'Processed output';
     outImg.className = 'max-w-full max-h-64 object-contain rounded-lg';
     resultPreview.appendChild(outImg);
 
-    const inRange = parseFloat(sizeKb) >= currentSpec.minKb && parseFloat(sizeKb) <= currentSpec.maxKb;
+    var inRange = parseFloat(sizeKb) >= currentSpec.minKb && parseFloat(sizeKb) <= currentSpec.maxKb;
     resultMeta.innerHTML =
       (inRange
         ? '<span class="text-emerald-600 font-medium">Within limits</span>'
@@ -410,15 +451,15 @@
   // ---------- Download ----------
   downloadBtn.addEventListener('click', function () {
     if (!processedBlob) return;
-    const a = document.createElement('a');
+    var a = document.createElement('a');
     a.href = URL.createObjectURL(processedBlob);
-    const boardLabel = (currentBoard.name || 'exam').split('(')[0].trim().replace(/\s+/g, '_').toLowerCase();
+    var boardLabel = (currentBoard.name || 'exam').split('(')[0].trim().replace(/\s+/g, '_').toLowerCase();
     a.download = boardLabel + '_' + currentDocKey + '.jpg';
     document.body.appendChild(a);
     a.click();
     a.remove();
   });
 
-  // ---------- Boot ----------
+  // Boot
   buildBoardOptions();
 })();

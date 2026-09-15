@@ -26,7 +26,7 @@
     "featureList": [
       "Supports all Central Government exams (SSC, RRB, UPSC, IBPS, NTA)",
       "Supports State PSC exams across all 28 States and 8 Union Territories",
-      "Dynamic background based on selected State Capital",
+      "Dynamic hero image based on selected State Capital",
       "Strict DPI, Pixel and KB validation loop",
       "Zero-server upload client-side processing"
     ],
@@ -47,23 +47,34 @@
     }
   </script>
   <style>
-    #cropViewport { touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
-    #cropImage { transform-origin: center center; will-change: transform; max-width: none; max-height: none; pointer-events: none; }
-    #dynamic-city-backdrop {
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      transition: background-image 0.6s ease;
+    #cropViewport {
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: grab;
+    }
+    #cropImage {
+      transform-origin: 0 0;
+      will-change: transform;
+      max-width: none;
+      max-height: none;
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #heroImage {
+      transition: opacity 0.45s ease;
+    }
+    #heroImage.is-loading {
+      opacity: 0.35;
     }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
 
-  <!-- Dynamic capital backdrop -->
-  <div id="dynamic-city-backdrop" class="fixed inset-0 -z-10 bg-slate-950"></div>
-
-  <!-- Header -->
-  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-30">
+  <!-- Sticky Header -->
+  <header class="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md sticky top-0 z-30">
     <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div class="flex items-center gap-3">
         <svg class="w-8 h-8 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -79,6 +90,24 @@
       </p>
     </div>
   </header>
+
+  <!-- HERO SECTION: Dynamic capital city image -->
+  <section id="heroSection" class="relative w-full h-48 sm:h-56 md:h-64 overflow-hidden border-b border-slate-800">
+    <img
+      id="heroImage"
+      src="https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=70"
+      alt="Capital city of selected exam board"
+      class="absolute inset-0 w-full h-full object-cover"
+      width="1600"
+      height="400"
+      decoding="async"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/30"></div>
+    <div class="absolute inset-0 flex flex-col items-center justify-end pb-5 px-4 text-center">
+      <p id="heroBoardName" class="text-sm sm:text-base font-semibold text-white drop-shadow">Staff Selection Commission (SSC)</p>
+      <p id="heroCapitalName" class="text-xs sm:text-sm text-slate-300 mt-0.5">Capital perspective: New Delhi</p>
+    </div>
+  </section>
 
   <main class="max-w-6xl mx-auto px-4 py-8 relative z-10">
 
@@ -108,7 +137,6 @@
         Select board and document type to view requirements
       </div>
 
-      <!-- Name & Date (conditional) -->
       <div id="nameDateSection" class="mt-4 p-4 bg-slate-950/50 rounded-xl border border-slate-800 hidden">
         <label class="flex items-center gap-2 text-sm font-medium text-slate-200 mb-3 cursor-pointer">
           <input type="checkbox" id="enableNameDate" class="rounded border-slate-600 text-brand-500 focus:ring-brand-500" checked />
@@ -130,7 +158,6 @@
     <!-- Workspace -->
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-      <!-- Cropper -->
       <section class="lg:col-span-3 bg-slate-900/80 border border-slate-800 rounded-2xl p-5 backdrop-blur-sm">
         <div class="flex items-center justify-between mb-3">
           <h2 class="font-semibold text-slate-100 flex items-center gap-2">
@@ -144,8 +171,8 @@
         </div>
 
         <div id="cropViewport" class="relative mx-auto overflow-hidden rounded-xl bg-slate-950 border-2 border-slate-700" style="max-width:100%; aspect-ratio: 3.5/4.5;">
-          <div class="absolute inset-0 flex items-center justify-center overflow-hidden">
-            <img id="cropImage" class="absolute select-none" draggable="false" style="display:none;" alt="Source for cropping" />
+          <div class="absolute inset-0 overflow-hidden">
+            <img id="cropImage" class="select-none" draggable="false" style="display:none;" alt="Source for cropping" />
           </div>
           <div class="absolute inset-0 border-2 border-brand-500 pointer-events-none rounded-lg" style="box-shadow: 0 0 0 9999px rgba(2,6,23,0.55);"></div>
           <div id="emptyState" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 text-sm pointer-events-none">
@@ -157,10 +184,8 @@
         <p class="text-xs text-slate-500 mt-3 text-center">
           Drag to pan &middot; Scroll or use slider to zoom &middot; Keep subject inside the amber frame
         </p>
-        <p id="backdrop-city-caption" class="text-xs text-slate-600 mt-1 text-center"></p>
       </section>
 
-      <!-- Result panel -->
       <section class="lg:col-span-2 space-y-5">
         <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 backdrop-blur-sm">
           <h2 class="font-semibold text-slate-100 mb-3 flex items-center gap-2">
@@ -200,17 +225,16 @@
       </section>
     </div>
 
-    <!-- AEO FAQ -->
     <section class="mt-12 bg-slate-900/70 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
       <h2 class="text-lg font-semibold text-slate-100 mb-5">Frequently Asked Questions</h2>
       <div class="space-y-5 text-sm text-slate-300">
         <div>
           <h3 class="font-medium text-slate-100 mb-1">What is the exact signature size for SSC forms?</h3>
-          <p>6.0 cm \u00d7 2.0 cm at 300 DPI (708 \u00d7 236 pixels). File size must be strictly between 10 KB and 20 KB in JPG/JPEG format. Signature must be horizontally aligned and clear.</p>
+          <p>6.0 cm &times; 2.0 cm at 300 DPI (708 &times; 236 pixels). File size must be strictly between 10 KB and 20 KB in JPG/JPEG format. Signature must be horizontally aligned and clear.</p>
         </div>
         <div>
           <h3 class="font-medium text-slate-100 mb-1">What is the signature requirement for RRB Railway exams?</h3>
-          <p>3.5 cm \u00d7 1.5 cm (140 \u00d7 60 pixels recommended). File size between 30 KB and 70 KB. Must be in running hand / cursive script. Block capitals are not accepted. Black or dark blue ink only.</p>
+          <p>3.5 cm &times; 1.5 cm (140 &times; 60 pixels recommended). File size between 30 KB and 70 KB. Must be in running hand / cursive script. Block capitals are not accepted. Black or dark blue ink only.</p>
         </div>
         <div>
           <h3 class="font-medium text-slate-100 mb-1">How to add Name and Date of Photo for UPSC and State PSC exams?</h3>
