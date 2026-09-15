@@ -1,26 +1,28 @@
 /**
  * Indian Govt Exam Image Cropper & Resizer
- * - Hero capital image updates on board select
- * - Canvas performance: CSS transform3d, rAF, reusable canvas, createImageBitmap
+ * Hero: thematic images for Central exams, capital images for States/UTs
+ * Image URLs loaded from images.json
+ * Canvas: CSS transform3d, rAF, reusable canvas, createImageBitmap
  */
 (function () {
   'use strict';
 
-  // ---------- State ----------
   let currentBoard = null;
   let currentDocKey = null;
   let currentSpec = null;
+  let currentBoardKey = null; // e.g. "central:rrb" or "state:west_bengal"
   let imgNatural = { w: 0, h: 0 };
   let transform = { scale: 1, x: 0, y: 0 };
   let isDragging = false;
   let lastPos = { x: 0, y: 0 };
   let processedBlob = null;
   let sourceImage = null;
-  let sourceBitmap = null; // createImageBitmap for faster canvas draw
+  let sourceBitmap = null;
   let rafPending = false;
-  let processCanvas = null; // reusable off-DOM canvas
+  let processCanvas = null;
+  let heroImages = null; // loaded from images.json
 
-  const $ = (id) => document.getElementById(id);
+  const $ = function (id) { return document.getElementById(id); };
 
   const boardSelect = $('boardSelect');
   const docSelect = $('docSelect');
@@ -43,75 +45,138 @@
   const heroBoardName = $('heroBoardName');
   const heroCapitalName = $('heroCapitalName');
 
-  // Curated high-quality Unsplash images per capital (reliable direct URLs)
-  const CAPITAL_IMAGES = {
-    'New Delhi': 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=70',
-    'Mumbai': 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=1600&q=70',
-    'Amaravati': 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=70',
-    'Itanagar': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
-    'Dispur (Guwahati)': 'https://images.unsplash.com/photo-1596402185679-9d8f0f5b0b0b?auto=format&fit=crop&w=1600&q=70',
-    'Patna': 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1600&q=70',
-    'Raipur': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
-    'Panaji': 'https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=70',
-    'Gandhinagar': 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1600&q=70',
-    'Chandigarh': 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=70',
-    'Shimla': 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=70',
-    'Ranchi': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
-    'Bengaluru': 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=1600&q=70',
-    'Thiruvananthapuram': 'https://images.unsplash.com/photo-1602216056335-c1aab87b0a48?auto=format&fit=crop&w=1600&q=70',
-    'Bhopal': 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=70',
-    'Imphal': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
-    'Shillong': 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=70',
-    'Aizawl': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
-    'Kohima': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
-    'Bhubaneswar': 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=70',
-    'Jaipur': 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1600&q=70',
-    'Gangtok': 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=70',
-    'Chennai': 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=70',
-    'Hyderabad': 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=1600&q=70',
-    'Agartala': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
-    'Lucknow': 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1600&q=70',
-    'Dehradun': 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=70',
-    'Kolkata': 'https://images.unsplash.com/photo-1558431382-27e303142255?auto=format&fit=crop&w=1600&q=70',
-    'Srinagar': 'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1600&q=70',
-    'Leh': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=70',
-    'Pondicherry': 'https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=70',
-    'Port Blair': 'https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=70',
-    'Daman': 'https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=70',
-    'Kavaratti': 'https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=70'
-  };
-  const FALLBACK_HERO = 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=70';
+  // ---------- Load hero images JSON ----------
+  async function loadHeroImages() {
+    try {
+      var res = await fetch('images.json');
+      heroImages = await res.json();
+    } catch (err) {
+      console.warn('Could not load images.json, using fallback');
+      heroImages = {
+        fallback: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=75',
+        central: {},
+        states: {},
+        uts: {}
+      };
+    }
+  }
+
+  /**
+   * Resolve hero image for the selected board.
+   * Central → thematic (railway, bank, exam hall…)
+   * State / UT → capital city
+   */
+  function resolveHeroEntry(boardKey) {
+    if (!heroImages || !boardKey) {
+      return {
+        url: (heroImages && heroImages.fallback) || '',
+        title: '',
+        caption: ''
+      };
+    }
+
+    var parts = boardKey.split(':');
+    var type = parts[0];
+    var id = parts[1];
+
+    if (type === 'central' && heroImages.central && heroImages.central[id]) {
+      var c = heroImages.central[id];
+      return {
+        url: c.url,
+        title: c.label || currentBoard.name,
+        caption: c.caption || ''
+      };
+    }
+
+    if (type === 'state' && heroImages.states && heroImages.states[id]) {
+      var s = heroImages.states[id];
+      return {
+        url: s.url,
+        title: currentBoard.name,
+        caption: 'Capital: ' + (s.capital || '')
+      };
+    }
+
+    if (type === 'ut' && heroImages.uts && heroImages.uts[id]) {
+      var u = heroImages.uts[id];
+      return {
+        url: u.url,
+        title: currentBoard.name,
+        caption: 'Capital: ' + (u.capital || '')
+      };
+    }
+
+    return {
+      url: heroImages.fallback,
+      title: currentBoard ? currentBoard.name : '',
+      caption: ''
+    };
+  }
+
+  function updateHero(boardKey) {
+    var entry = resolveHeroEntry(boardKey);
+    if (!entry.url) return;
+
+    heroBoardName.textContent = entry.title || (currentBoard && currentBoard.name) || '';
+    heroCapitalName.textContent = entry.caption || '';
+
+    // Skip if same image already showing
+    if (heroImage.getAttribute('data-url') === entry.url) return;
+
+    heroImage.classList.add('is-loading');
+    heroImage.setAttribute('data-url', entry.url);
+
+    var preloader = new Image();
+    preloader.onload = function () {
+      heroImage.src = entry.url;
+      heroImage.alt = entry.title + (entry.caption ? ' — ' + entry.caption : '');
+      heroImage.classList.remove('is-loading');
+    };
+    preloader.onerror = function () {
+      var fb = (heroImages && heroImages.fallback) || entry.url;
+      heroImage.src = fb;
+      heroImage.setAttribute('data-url', fb);
+      heroImage.classList.remove('is-loading');
+    };
+    preloader.src = entry.url;
+  }
 
   // ---------- Board dropdown ----------
   function buildBoardOptions() {
     boardSelect.innerHTML = '';
 
-    const centralGroup = document.createElement('optgroup');
+    var centralGroup = document.createElement('optgroup');
     centralGroup.label = 'Central Government';
-    Object.entries(RECRUITMENT_REGISTRY.central).forEach(function ([id, board]) {
-      const opt = document.createElement('option');
+    Object.entries(RECRUITMENT_REGISTRY.central).forEach(function (pair) {
+      var id = pair[0];
+      var board = pair[1];
+      var opt = document.createElement('option');
       opt.value = 'central:' + id;
       opt.textContent = board.name;
       centralGroup.appendChild(opt);
     });
     boardSelect.appendChild(centralGroup);
 
-    const stateGroup = document.createElement('optgroup');
+    var stateGroup = document.createElement('optgroup');
     stateGroup.label = 'State PSC / Recruitment Boards';
     Object.entries(RECRUITMENT_REGISTRY.states)
       .sort(function (a, b) { return a[1].name.localeCompare(b[1].name); })
-      .forEach(function ([id, entry]) {
-        const opt = document.createElement('option');
+      .forEach(function (pair) {
+        var id = pair[0];
+        var entry = pair[1];
+        var opt = document.createElement('option');
         opt.value = 'state:' + id;
         opt.textContent = entry.name;
         stateGroup.appendChild(opt);
       });
     boardSelect.appendChild(stateGroup);
 
-    const utGroup = document.createElement('optgroup');
+    var utGroup = document.createElement('optgroup');
     utGroup.label = 'Union Territories';
-    Object.entries(RECRUITMENT_REGISTRY.uts).forEach(function ([id, entry]) {
-      const opt = document.createElement('option');
+    Object.entries(RECRUITMENT_REGISTRY.uts).forEach(function (pair) {
+      var id = pair[0];
+      var entry = pair[1];
+      var opt = document.createElement('option');
       opt.value = 'ut:' + id;
       opt.textContent = entry.name;
       utGroup.appendChild(opt);
@@ -133,13 +198,13 @@
   }
 
   function onBoardChange() {
-    currentBoard = resolveBoard(boardSelect.value);
+    currentBoardKey = boardSelect.value;
+    currentBoard = resolveBoard(currentBoardKey);
     if (!currentBoard) return;
 
-    // Update HERO image + captions
-    updateHero(currentBoard);
+    // Immediate hero swap from images.json
+    updateHero(currentBoardKey);
 
-    // Document types
     docSelect.innerHTML = '';
     Object.keys(currentBoard.specs).forEach(function (key) {
       var opt = document.createElement('option');
@@ -149,28 +214,6 @@
     });
     docSelect.onchange = updateCurrentSpec;
     updateCurrentSpec();
-  }
-
-  function updateHero(board) {
-    var capital = board.capitalName || 'India';
-    var url = CAPITAL_IMAGES[capital] || FALLBACK_HERO;
-
-    heroBoardName.textContent = board.name;
-    heroCapitalName.textContent = 'Capital perspective: ' + capital;
-
-    if (heroImage.src.indexOf(url.split('?')[0]) !== -1) return; // already showing
-
-    heroImage.classList.add('is-loading');
-    var preloader = new Image();
-    preloader.onload = function () {
-      heroImage.src = url;
-      heroImage.classList.remove('is-loading');
-    };
-    preloader.onerror = function () {
-      heroImage.src = FALLBACK_HERO;
-      heroImage.classList.remove('is-loading');
-    };
-    preloader.src = url;
   }
 
   function updateCurrentSpec() {
@@ -205,7 +248,7 @@
     resultMeta.textContent = '';
   }
 
-  // ---------- Image load (with createImageBitmap for faster later draws) ----------
+  // ---------- Image load ----------
   fileInput.addEventListener('change', function (e) {
     var file = e.target.files[0];
     if (!file) return;
@@ -216,7 +259,6 @@
       sourceImage = img;
       imgNatural = { w: img.naturalWidth, h: img.naturalHeight };
 
-      // Prefer ImageBitmap for faster canvas transfer
       if (typeof createImageBitmap === 'function') {
         createImageBitmap(img).then(function (bmp) {
           if (sourceBitmap) sourceBitmap.close();
@@ -242,14 +284,12 @@
     img.src = url;
   });
 
-  // ---------- Transform via CSS translate3d + scale (GPU) ----------
+  // ---------- Transform (GPU) ----------
   function applyTransform() {
     var vpW = cropViewport.clientWidth;
     var vpH = cropViewport.clientHeight;
     var displayW = imgNatural.w * transform.scale;
     var displayH = imgNatural.h * transform.scale;
-
-    // Center + pan offset
     var tx = (vpW - displayW) / 2 + transform.x;
     var ty = (vpH - displayH) / 2 + transform.y;
 
@@ -270,7 +310,6 @@
     scheduleTransform();
   });
 
-  // Mouse pan
   cropViewport.addEventListener('mousedown', function (e) {
     if (!sourceImage) return;
     isDragging = true;
@@ -289,7 +328,6 @@
     cropViewport.style.cursor = 'grab';
   });
 
-  // Touch pan
   cropViewport.addEventListener('touchstart', function (e) {
     if (!sourceImage || e.touches.length !== 1) return;
     isDragging = true;
@@ -304,7 +342,6 @@
   }, { passive: true });
   cropViewport.addEventListener('touchend', function () { isDragging = false; });
 
-  // Wheel zoom
   cropViewport.addEventListener('wheel', function (e) {
     if (!sourceImage) return;
     e.preventDefault();
@@ -316,65 +353,51 @@
     scheduleTransform();
   }, { passive: false });
 
-  // ---------- Name & Date stamp ----------
   function applyCandidateNameDateStamp(ctx, width, height, candidateName, photoDate) {
     var bannerHeight = Math.floor(height * 0.18);
     var bannerY = height - bannerHeight;
-
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, bannerY, width, bannerHeight);
-
     ctx.strokeStyle = '#E2E8F0';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(0, bannerY);
     ctx.lineTo(width, bannerY);
     ctx.stroke();
-
     ctx.fillStyle = '#0F172A';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-
     var nameFontSize = Math.max(11, Math.floor(bannerHeight * 0.32));
     var dateFontSize = Math.max(9, Math.floor(bannerHeight * 0.26));
-
     ctx.font = 'bold ' + nameFontSize + 'px system-ui, -apple-system, sans-serif';
     ctx.fillText((candidateName || 'CANDIDATE NAME').toUpperCase(), width / 2, bannerY + bannerHeight * 0.35);
-
     ctx.font = '600 ' + dateFontSize + 'px system-ui, -apple-system, sans-serif';
     ctx.fillText('Photo Date: ' + (photoDate || 'DD/MM/YYYY'), width / 2, bannerY + bannerHeight * 0.72);
   }
 
-  // ---------- Binary quality loop ----------
   async function generateCompliantImageBlob(canvas, minKb, maxKb) {
     var low = 0.08;
     var high = 0.98;
     var bestBlob = null;
     var bestDiff = Infinity;
-    var maxAttempts = 12;
-
-    for (var i = 0; i < maxAttempts; i++) {
+    for (var i = 0; i < 12; i++) {
       var q = (low + high) / 2;
       var blob = await new Promise(function (resolve) {
         canvas.toBlob(resolve, 'image/jpeg', q);
       });
       var sizeKb = blob.size / 1024;
-
       if (sizeKb >= minKb && sizeKb <= maxKb) return blob;
-
       var diff = sizeKb > maxKb ? sizeKb - maxKb : minKb - sizeKb;
       if (diff < bestDiff) {
         bestDiff = diff;
         bestBlob = blob;
       }
-
       if (sizeKb > maxKb) high = q;
       else low = q;
     }
     return bestBlob;
   }
 
-  // ---------- Process (optimized canvas path) ----------
   processBtn.addEventListener('click', async function () {
     if (!sourceImage || !currentSpec) return;
 
@@ -384,17 +407,13 @@
     var tw = currentSpec.width;
     var th = currentSpec.height;
 
-    // Reuse a single off-DOM canvas
-    if (!processCanvas) {
-      processCanvas = document.createElement('canvas');
-    }
+    if (!processCanvas) processCanvas = document.createElement('canvas');
     processCanvas.width = tw;
     processCanvas.height = th;
 
     var ctx = processCanvas.getContext('2d', { alpha: false });
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
-
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, tw, th);
 
@@ -405,13 +424,11 @@
     var displayH = imgNatural.h * scale;
     var imgLeft = (vpW - displayW) / 2 + transform.x;
     var imgTop = (vpH - displayH) / 2 + transform.y;
-
     var sx = (0 - imgLeft) / scale;
     var sy = (0 - imgTop) / scale;
     var sWidth = vpW / scale;
     var sHeight = vpH / scale;
 
-    // Prefer ImageBitmap when available (faster GPU upload)
     var drawSource = sourceBitmap || sourceImage;
     ctx.drawImage(drawSource, sx, sy, sWidth, sHeight, 0, 0, tw, th);
 
@@ -448,7 +465,6 @@
     processBtn.innerHTML = '<svg class="w-4 h-4 inline-block mr-1.5 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Process Image';
   });
 
-  // ---------- Download ----------
   downloadBtn.addEventListener('click', function () {
     if (!processedBlob) return;
     var a = document.createElement('a');
@@ -460,6 +476,8 @@
     a.remove();
   });
 
-  // Boot
-  buildBoardOptions();
+  // Boot: load images.json first, then build UI
+  loadHeroImages().then(function () {
+    buildBoardOptions();
+  });
 })();

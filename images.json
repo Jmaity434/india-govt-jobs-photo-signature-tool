@@ -1,0 +1,182 @@
+{
+  "version": "1.0",
+  "fallback": "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=75",
+
+  "central": {
+    "ssc": {
+      "label": "Staff Selection Commission",
+      "caption": "Central recruitment examinations",
+      "url": "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1600&q=75"
+    },
+    "rrb": {
+      "label": "Railway Recruitment Board",
+      "caption": "Indian Railways — tracks & stations",
+      "url": "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1600&q=75"
+    },
+    "upsc": {
+      "label": "Union Public Service Commission",
+      "caption": "Civil services & national administration",
+      "url": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=75"
+    },
+    "ibps": {
+      "label": "Banking Services (IBPS / SBI)",
+      "caption": "Banking & financial services",
+      "url": "https://images.unsplash.com/photo-1565514020176-b2f8e1c0a0f0?auto=format&fit=crop&w=1600&q=75"
+    },
+    "nta": {
+      "label": "National Testing Agency",
+      "caption": "NEET · JEE · CUET examinations",
+      "url": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1600&q=75"
+    }
+  },
+
+  "states": {
+    "andhra_pradesh": {
+      "capital": "Amaravati",
+      "url": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=75"
+    },
+    "arunachal_pradesh": {
+      "capital": "Itanagar",
+      "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=75"
+    },
+    "assam": {
+      "capital": "Dispur (Guwahati)",
+      "url": "https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=1600&q=75"
+    },
+    "bihar": {
+      "capital": "Patna",
+      "url": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1600&q=75"
+    },
+    "chhattisgarh": {
+      "capital": "Raipur",
+      "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=75"
+    },
+    "goa": {
+      "capital": "Panaji",
+      "url": "https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=75"
+    },
+    "gujarat": {
+      "capital": "Gandhinagar",
+      "url": "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1600&q=75"
+    },
+    "haryana": {
+      "capital": "Chandigarh",
+      "url": "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=75"
+    },
+    "himachal_pradesh": {
+      "capital": "Shimla",
+      "url": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=75"
+    },
+    "jharkhand": {
+      "capital": "Ranchi",
+      "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=75"
+    },
+    "karnataka": {
+      "capital": "Bengaluru",
+      "url": "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=1600&q=75"
+    },
+    "kerala": {
+      "capital": "Thiruvananthapuram",
+      "url": "https://images.unsplash.com/photo-1602216056335-c1aab87b0a48?auto=format&fit=crop&w=1600&q=75"
+    },
+    "madhya_pradesh": {
+      "capital": "Bhopal",
+      "url": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=75"
+    },
+    "maharashtra": {
+      "capital": "Mumbai",
+      "url": "https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=1600&q=75"
+    },
+    "manipur": {
+      "capital": "Imphal",
+      "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=75"
+    },
+    "meghalaya": {
+      "capital": "Shillong",
+      "url": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=75"
+    },
+    "mizoram": {
+      "capital": "Aizawl",
+      "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=75"
+    },
+    "nagaland": {
+      "capital": "Kohima",
+      "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=75"
+    },
+    "odisha": {
+      "capital": "Bhubaneswar",
+      "url": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=75"
+    },
+    "punjab": {
+      "capital": "Chandigarh",
+      "url": "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=75"
+    },
+    "rajasthan": {
+      "capital": "Jaipur",
+      "url": "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1600&q=75"
+    },
+    "sikkim": {
+      "capital": "Gangtok",
+      "url": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=75"
+    },
+    "tamil_nadu": {
+      "capital": "Chennai",
+      "url": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=75"
+    },
+    "telangana": {
+      "capital": "Hyderabad",
+      "url": "https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=1600&q=75"
+    },
+    "tripura": {
+      "capital": "Agartala",
+      "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=75"
+    },
+    "uttar_pradesh": {
+      "capital": "Lucknow",
+      "url": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1600&q=75"
+    },
+    "uttarakhand": {
+      "capital": "Dehradun",
+      "url": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=75"
+    },
+    "west_bengal": {
+      "capital": "Kolkata",
+      "url": "https://images.unsplash.com/photo-1558431382-27e303142255?auto=format&fit=crop&w=1600&q=75"
+    }
+  },
+
+  "uts": {
+    "delhi": {
+      "capital": "New Delhi",
+      "url": "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=75"
+    },
+    "jammu_kashmir": {
+      "capital": "Srinagar",
+      "url": "https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1600&q=75"
+    },
+    "ladakh": {
+      "capital": "Leh",
+      "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=75"
+    },
+    "chandigarh_ut": {
+      "capital": "Chandigarh",
+      "url": "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=75"
+    },
+    "puducherry": {
+      "capital": "Pondicherry",
+      "url": "https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=75"
+    },
+    "andaman_nicobar": {
+      "capital": "Port Blair",
+      "url": "https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=75"
+    },
+    "dadra_nagar_daman_diu": {
+      "capital": "Daman",
+      "url": "https://images.unsplash.com/photo-1512343879784-a960cd67eb2b?auto=format&fit=crop&w=1600&q=75"
+    },
+    "lakshadweep": {
+      "capital": "Kavaratti",
+      "url": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=75"
+    }
+  }
+}
