@@ -3,548 +3,236 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Indian Government Exam Photo & Signature Cropper | SSC RRB UPSC IBPS NTA</title>
-  <meta name="description" content="Free professional client-side photo & signature cropper and resizer for SSC, RRB, UPSC, IBPS, NTA, WBPSC. Exact official size, KB limits, zoom & pan. No upload to server." />
-  <meta name="keywords" content="SSC photo size, RRB signature size, UPSC photo requirements, IBPS photo signature, NTA passport photo, government job photo cropper, cyber cafe tool" />
+  <title>Indian Govt Exam Photo &amp; Signature Resizer (All 28 States &amp; 8 UTs) | 100% Free &amp; Private</title>
+  <meta name="description" content="Instant client-side photo, signature, thumb impression and declaration cropper and resizer for SSC, UPSC, RRB, IBPS, NTA NEET and all 28 State PSC recruitment boards. Conforms strictly to official DPI and KB limits." />
+  <meta name="keywords" content="Indian government exam image converter, SSC signature 708x236 px 300 DPI, RRB photo size 30 to 70 KB, UPSC photo with name and date generator, IBPS declaration resizer, state PSC photo dimension requirements, cyber cafe photo tool" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://jmaity434.github.io/india-govt-jobs-photo-signature-tool/" />
 
-  <!-- Tailwind CSS -->
+  <meta property="og:title" content="Indian Govt Exam Photo &amp; Signature Resizer (All States &amp; UTs)" />
+  <meta property="og:description" content="Free private client-side cropper for SSC, RRB, UPSC, IBPS, NTA and every State PSC. Exact official pixel and KB limits." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://jmaity434.github.io/india-govt-jobs-photo-signature-tool/" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Indian Government Exam Image Resizer & Cropper",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "All modern browsers (Chrome, Edge, Firefox, Safari)",
+    "browserRequirements": "Requires JavaScript. Requires HTML5 Canvas.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+    "featureList": [
+      "Supports all Central Government exams (SSC, RRB, UPSC, IBPS, NTA)",
+      "Supports State PSC exams across all 28 States and 8 Union Territories",
+      "Dynamic background based on selected State Capital",
+      "Strict DPI, Pixel and KB validation loop",
+      "Zero-server upload client-side processing"
+    ],
+    "author": { "@type": "Person", "name": "Joy Maity" }
+  }
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            brand: { 50: '#fffbeb', 100: '#fef3c7', 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+            brand: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
           }
         }
       }
     }
   </script>
-
   <style>
-    /* Cropper specific styles */
-    #cropViewport {
-      touch-action: none;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    #cropImage {
-      transform-origin: center center;
-      will-change: transform;
-      max-width: none;
-      max-height: none;
-    }
-    .aspect-box {
-      position: relative;
-      background: #0f172a;
-    }
-    .crop-overlay {
-      box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.65);
+    #cropViewport { touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
+    #cropImage { transform-origin: center center; will-change: transform; max-width: none; max-height: none; pointer-events: none; }
+    #dynamic-city-backdrop {
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      transition: background-image 0.6s ease;
     }
   </style>
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Indian Government Exam Photo & Signature Cropper",
-    "description": "Professional free client-side tool to crop and resize photos and signatures for SSC, RRB, UPSC, IBPS, NTA and WBPSC exams with exact official dimensions and file size limits.",
-    "url": "https://jmaity434.github.io/india-govt-jobs-photo-signature-tool/",
-    "applicationCategory": "UtilityApplication",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
-    "author": { "@type": "Person", "name": "Joy Maity" }
-  }
-  </script>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
+
+  <!-- Dynamic capital backdrop -->
+  <div id="dynamic-city-backdrop" class="fixed inset-0 -z-10 bg-slate-950"></div>
 
   <!-- Header -->
-  <header class="bg-slate-900 text-white">
-    <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <div>
-        <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Govt Exam Photo & Signature Tool</h1>
-        <p class="text-slate-300 text-sm mt-1">SSC • RRB • UPSC • IBPS • NTA • WBPSC — Free client-side cropper</p>
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <svg class="w-8 h-8 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight">Govt Exam Image Resizer</h1>
+          <p class="text-xs text-slate-400">SSC &middot; RRB &middot; UPSC &middot; IBPS &middot; NTA &middot; All 28 States &amp; 8 UTs</p>
+        </div>
       </div>
-      <div class="flex gap-2">
-        <button onclick="setLang('en')" class="px-3 py-1 rounded-full text-xs border border-slate-600 hover:bg-slate-800 transition">English</button>
-        <button onclick="setLang('bn')" class="px-3 py-1 rounded-full text-xs border border-slate-600 hover:bg-slate-800 transition">বাংলা</button>
-      </div>
+      <p class="text-xs text-slate-400 max-w-xs leading-relaxed">
+        All processing executes locally in memory. Zero images are transmitted over the network.
+      </p>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 py-8">
+  <main class="max-w-6xl mx-auto px-4 py-8 relative z-10">
 
-    <!-- Controls -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-6">
+    <!-- Selectors -->
+    <section class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 mb-6 backdrop-blur-sm">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1" id="label-board">Exam Board</label>
-          <select id="boardSelect" class="w-full rounded-xl border-slate-300 border px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none"></select>
+          <label for="boardSelect" class="block text-sm font-medium text-slate-300 mb-1.5">Exam Board / State</label>
+          <select id="boardSelect" class="w-full rounded-xl bg-slate-950 border border-slate-700 text-slate-100 px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none"></select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1" id="label-doc">Document Type</label>
-          <select id="docSelect" class="w-full rounded-xl border-slate-300 border px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none"></select>
+          <label for="docSelect" class="block text-sm font-medium text-slate-300 mb-1.5">Document Type</label>
+          <select id="docSelect" class="w-full rounded-xl bg-slate-950 border border-slate-700 text-slate-100 px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none"></select>
         </div>
         <div class="flex items-end">
           <label class="w-full cursor-pointer">
-            <span class="block w-full text-center bg-brand-500 hover:bg-brand-600 text-slate-900 font-semibold rounded-xl px-4 py-2.5 text-sm transition shadow-sm">
-              📁 Upload Image
+            <span class="flex items-center justify-center gap-2 w-full bg-brand-500 hover:bg-brand-600 text-slate-900 font-semibold rounded-xl px-4 py-2.5 text-sm transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              Upload Image
             </span>
             <input type="file" id="fileInput" accept="image/*" class="hidden" />
           </label>
         </div>
       </div>
 
-      <!-- Live Target Info -->
-      <div id="targetInfo" class="mt-4 p-3 bg-slate-50 rounded-xl text-sm text-slate-600 border border-slate-100">
-        Select board & document type to see requirements
+      <div id="targetInfo" class="mt-4 px-3 py-2.5 bg-slate-950/60 rounded-xl text-sm text-slate-300 border border-slate-800">
+        Select board and document type to view requirements
       </div>
-    </div>
 
-    <!-- Main Workspace -->
+      <!-- Name & Date (conditional) -->
+      <div id="nameDateSection" class="mt-4 p-4 bg-slate-950/50 rounded-xl border border-slate-800 hidden">
+        <label class="flex items-center gap-2 text-sm font-medium text-slate-200 mb-3 cursor-pointer">
+          <input type="checkbox" id="enableNameDate" class="rounded border-slate-600 text-brand-500 focus:ring-brand-500" checked />
+          Add Candidate Name &amp; Photo Date stamp (required by UPSC / some State PSCs)
+        </label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="candidateName" class="block text-xs text-slate-400 mb-1">Candidate Name</label>
+            <input type="text" id="candidateName" placeholder="Full name as on form" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:ring-2 focus:ring-brand-500 outline-none" />
+          </div>
+          <div>
+            <label for="photoDate" class="block text-xs text-slate-400 mb-1">Photo Date</label>
+            <input type="text" id="photoDate" placeholder="DD/MM/YYYY" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:ring-2 focus:ring-brand-500 outline-none" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workspace -->
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-      <!-- Left: Cropper -->
-      <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+      <!-- Cropper -->
+      <section class="lg:col-span-3 bg-slate-900/80 border border-slate-800 rounded-2xl p-5 backdrop-blur-sm">
         <div class="flex items-center justify-between mb-3">
-          <h2 class="font-semibold text-slate-800" id="crop-title">Crop & Align</h2>
-          <div class="flex items-center gap-2 text-xs text-slate-500">
+          <h2 class="font-semibold text-slate-100 flex items-center gap-2">
+            <svg class="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+            Crop &amp; Align
+          </h2>
+          <div class="flex items-center gap-2 text-xs text-slate-400">
             <span>Zoom</span>
-            <input type="range" id="zoomSlider" min="1" max="4" step="0.01" value="1" class="w-24 accent-brand-500" disabled />
+            <input type="range" id="zoomSlider" min="0.5" max="4" step="0.01" value="1" class="w-24 accent-brand-500" disabled />
           </div>
         </div>
 
-        <!-- Crop Viewport -->
-        <div id="cropViewport" class="relative mx-auto overflow-hidden rounded-xl bg-slate-900 border-2 border-slate-700" style="max-width:100%; aspect-ratio: 3.5/4.5;">
-          <div id="cropFrame" class="absolute inset-0 flex items-center justify-center overflow-hidden">
-            <img id="cropImage" class="absolute pointer-events-none select-none" draggable="false" style="display:none;" />
+        <div id="cropViewport" class="relative mx-auto overflow-hidden rounded-xl bg-slate-950 border-2 border-slate-700" style="max-width:100%; aspect-ratio: 3.5/4.5;">
+          <div class="absolute inset-0 flex items-center justify-center overflow-hidden">
+            <img id="cropImage" class="absolute select-none" draggable="false" style="display:none;" alt="Source for cropping" />
           </div>
-          <!-- Visual crop border -->
-          <div class="absolute inset-0 border-2 border-brand-500 pointer-events-none rounded-lg crop-overlay"></div>
-          <div id="emptyState" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 text-sm">
-            <svg class="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            <span>Upload an image to start cropping</span>
+          <div class="absolute inset-0 border-2 border-brand-500 pointer-events-none rounded-lg" style="box-shadow: 0 0 0 9999px rgba(2,6,23,0.55);"></div>
+          <div id="emptyState" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 text-sm pointer-events-none">
+            <svg class="w-12 h-12 mb-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span>Upload an image to begin cropping</span>
           </div>
         </div>
 
-        <p class="text-xs text-slate-500 mt-3 text-center" id="hint-text">
-          Drag to pan • Scroll or slider to zoom • Align face/signature inside the yellow frame
+        <p class="text-xs text-slate-500 mt-3 text-center">
+          Drag to pan &middot; Scroll or use slider to zoom &middot; Keep subject inside the amber frame
         </p>
-      </div>
+        <p id="backdrop-city-caption" class="text-xs text-slate-600 mt-1 text-center"></p>
+      </section>
 
-      <!-- Right: Result + Download -->
-      <div class="lg:col-span-2 space-y-5">
+      <!-- Result panel -->
+      <section class="lg:col-span-2 space-y-5">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 backdrop-blur-sm">
+          <h2 class="font-semibold text-slate-100 mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Final Output
+          </h2>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-          <h2 class="font-semibold text-slate-800 mb-3" id="result-title">Final Output</h2>
-
-          <div id="resultPreview" class="bg-slate-100 rounded-xl min-h-[180px] flex items-center justify-center overflow-hidden border border-slate-200">
-            <span class="text-slate-400 text-sm">Processed image will appear here</span>
+          <div id="resultPreview" class="bg-slate-950 rounded-xl min-h-[180px] flex items-center justify-center overflow-hidden border border-slate-800">
+            <span class="text-slate-600 text-sm">Processed image appears here</span>
           </div>
 
-          <div id="resultMeta" class="mt-3 text-sm text-slate-600 min-h-[1.5rem]"></div>
+          <div id="resultMeta" class="mt-3 text-sm text-slate-400 min-h-[1.5rem]"></div>
 
           <button id="processBtn" disabled
-            class="mt-4 w-full bg-slate-800 hover:bg-slate-900 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold rounded-xl py-3 text-sm transition">
-            ✨ Process Image
+            class="mt-4 w-full flex items-center justify-center gap-2 bg-slate-100 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed text-slate-900 font-semibold rounded-xl py-3 text-sm transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            Process Image
           </button>
 
           <button id="downloadBtn" disabled
-            class="mt-2 w-full bg-brand-500 hover:bg-brand-600 disabled:opacity-40 disabled:cursor-not-allowed text-slate-900 font-semibold rounded-xl py-3 text-sm transition shadow-sm">
-            ⬇️ Download JPEG
+            class="mt-2 w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold rounded-xl py-3 text-sm transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Download Processed JPEG
           </button>
 
-          <p class="text-xs text-slate-500 mt-3 text-center" id="mobile-hint">
-            On mobile: long-press the preview image to save
+          <p class="text-xs text-slate-500 mt-3 text-center leading-relaxed">
+            Mobile tip: if download does not trigger, press and hold the image above to save directly to your gallery.
           </p>
         </div>
 
-        <!-- Quick Specs Card -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-          <h3 class="font-semibold text-slate-800 mb-2 text-sm">Current Requirements</h3>
-          <ul id="reqList" class="text-sm text-slate-600 space-y-1.5">
-            <li>• Select a board first</li>
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 backdrop-blur-sm">
+          <h3 class="font-semibold text-slate-200 mb-2 text-sm">Current Requirements</h3>
+          <ul id="reqList" class="text-sm text-slate-400 space-y-1.5">
+            <li>Select a board first</li>
           </ul>
         </div>
-      </div>
+      </section>
     </div>
 
-    <!-- Full Specs Table -->
-    <div class="mt-10 bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-      <h2 class="font-semibold text-slate-800 mb-4" id="specs-title">Official Specifications Database</h2>
-      <div id="specsContainer" class="overflow-x-auto"></div>
-    </div>
+    <!-- AEO FAQ -->
+    <section class="mt-12 bg-slate-900/70 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
+      <h2 class="text-lg font-semibold text-slate-100 mb-5">Frequently Asked Questions</h2>
+      <div class="space-y-5 text-sm text-slate-300">
+        <div>
+          <h3 class="font-medium text-slate-100 mb-1">What is the exact signature size for SSC forms?</h3>
+          <p>6.0 cm \u00d7 2.0 cm at 300 DPI (708 \u00d7 236 pixels). File size must be strictly between 10 KB and 20 KB in JPG/JPEG format. Signature must be horizontally aligned and clear.</p>
+        </div>
+        <div>
+          <h3 class="font-medium text-slate-100 mb-1">What is the signature requirement for RRB Railway exams?</h3>
+          <p>3.5 cm \u00d7 1.5 cm (140 \u00d7 60 pixels recommended). File size between 30 KB and 70 KB. Must be in running hand / cursive script. Block capitals are not accepted. Black or dark blue ink only.</p>
+        </div>
+        <div>
+          <h3 class="font-medium text-slate-100 mb-1">How to add Name and Date of Photo for UPSC and State PSC exams?</h3>
+          <p>Select UPSC (or Kerala PSC, MPPSC, TNPSC etc.). Enable the Name &amp; Date checkbox, enter the candidate name and photo date, then process. A calibrated white banner is rendered on the bottom 18% of the image with centered typography.</p>
+        </div>
+        <div>
+          <h3 class="font-medium text-slate-100 mb-1">Is my photo uploaded to any server?</h3>
+          <p>No. Every operation (crop, resize, compression) runs entirely inside your browser using the HTML5 Canvas API. No image data leaves your device.</p>
+        </div>
+      </div>
+    </section>
 
   </main>
 
-  <footer class="border-t border-slate-200 mt-12 py-8 text-center text-sm text-slate-500">
-    <p>100% client-side • No image leaves your device • MIT License</p>
-    <p class="mt-1">Built for Indian job aspirants & cyber cafes • <a href="https://github.com/Jmaity434/india-govt-jobs-photo-signature-tool" class="text-brand-600 hover:underline">GitHub</a></p>
+  <footer class="border-t border-slate-800 mt-16 py-8 text-center text-sm text-slate-500">
+    <p>100% client-side processing &middot; No image leaves your device &middot; MIT License</p>
+    <p class="mt-1">Built for Indian job aspirants and cyber cafes &middot;
+      <a href="https://github.com/Jmaity434/india-govt-jobs-photo-signature-tool" class="text-brand-500 hover:underline">View source on GitHub</a>
+    </p>
   </footer>
 
-<script>
-/* ============================================================
-   Indian Govt Exam Photo/Signature Cropper
-   Pure client-side • Canvas API • Zoom + Pan • Quality Loop
-   ============================================================ */
-
-let specsData = null;
-let currentDoc = null;
-let imgNatural = { w: 0, h: 0 };
-let transform = { scale: 1, x: 0, y: 0 };
-let isDragging = false;
-let lastPos = { x: 0, y: 0 };
-let processedBlob = null;
-let currentLang = 'en';
-
-const $ = (id) => document.getElementById(id);
-
-/* ---------- Load Specs ---------- */
-async function loadSpecs() {
-  const res = await fetch('data/specs.json');
-  specsData = await res.json();
-  populateBoards();
-  renderFullSpecs();
-}
-
-function populateBoards() {
-  const sel = $('boardSelect');
-  sel.innerHTML = '';
-  specsData.boards.forEach(b => {
-    const opt = document.createElement('option');
-    opt.value = b.id;
-    opt.textContent = b.name;
-    sel.appendChild(opt);
-  });
-  sel.addEventListener('change', onBoardChange);
-  onBoardChange();
-}
-
-function onBoardChange() {
-  const board = specsData.boards.find(b => b.id === $('boardSelect').value);
-  const sel = $('docSelect');
-  sel.innerHTML = '';
-  Object.keys(board.documents).forEach(key => {
-    const opt = document.createElement('option');
-    opt.value = key;
-    opt.textContent = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    sel.appendChild(opt);
-  });
-  sel.onchange = updateCurrentDoc;
-  updateCurrentDoc();
-}
-
-function updateCurrentDoc() {
-  const board = specsData.boards.find(b => b.id === $('boardSelect').value);
-  const key = $('docSelect').value;
-  currentDoc = board.documents[key];
-  currentDoc._key = key;
-  currentDoc._board = board.short_name;
-
-  // Resolve target pixels
-  if (currentDoc.square) {
-    currentDoc._tw = 500; // sensible default inside 350-1000
-    currentDoc._th = 500;
-  } else {
-    currentDoc._tw = currentDoc.target_width_px || 400;
-    currentDoc._th = currentDoc.target_height_px || 500;
-  }
-
-  // Update aspect ratio of viewport
-  const ratio = currentDoc._tw / currentDoc._th;
-  $('cropViewport').style.aspectRatio = `${currentDoc._tw} / ${currentDoc._th}`;
-
-  // Target info banner
-  let html = `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-100 text-brand-700 text-xs font-medium">${(currentDoc.format || ['jpg']).join('/').toUpperCase()}</span> `;
-  html += `<strong>${currentDoc._tw} × ${currentDoc._th} px</strong>`;
-  if (currentDoc.min_size_kb != null) {
-    html += ` &nbsp;|&nbsp; <strong>${currentDoc.min_size_kb} – ${currentDoc.max_size_kb} KB</strong>`;
-  }
-  if (currentDoc.notes) html += `<br><span class="text-xs text-slate-500 mt-1 block">${currentDoc.notes}</span>`;
-  $('targetInfo').innerHTML = html;
-
-  // Requirements list
-  const list = $('reqList');
-  list.innerHTML = `
-    <li>• Format: <strong>${(currentDoc.format||['jpg']).join(', ').toUpperCase()}</strong></li>
-    <li>• Dimensions: <strong>${currentDoc._tw} × ${currentDoc._th} px</strong></li>
-    <li>• File size: <strong>${currentDoc.min_size_kb ?? '—'} – ${currentDoc.max_size_kb ?? '—'} KB</strong></li>
-    ${currentDoc.dpi ? `<li>• DPI reference: ${currentDoc.dpi}</li>` : ''}
-    ${currentDoc.notes ? `<li class="text-slate-500">${currentDoc.notes}</li>` : ''}
-  `;
-
-  // Reset result if needed
-  processedBlob = null;
-  $('downloadBtn').disabled = true;
-  $('resultMeta').textContent = '';
-}
-
-/* ---------- Image Upload & Transform ---------- */
-$('fileInput').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const url = URL.createObjectURL(file);
-  const img = $('cropImage');
-  img.src = url;
-  await img.decode();
-
-  imgNatural = { w: img.naturalWidth, h: img.naturalHeight };
-  img.style.display = 'block';
-  $('emptyState').style.display = 'none';
-  $('zoomSlider').disabled = false;
-  $('processBtn').disabled = false;
-
-  // Initial fit: cover the crop frame
-  const vp = $('cropViewport');
-  const vpW = vp.clientWidth;
-  const vpH = vp.clientHeight;
-  const scale = Math.max(vpW / imgNatural.w, vpH / imgNatural.h);
-  transform = { scale, x: 0, y: 0 };
-  $('zoomSlider').value = scale;
-  applyTransform();
-});
-
-function applyTransform() {
-  const img = $('cropImage');
-  const vp = $('cropViewport');
-  const vpW = vp.clientWidth;
-  const vpH = vp.clientHeight;
-
-  // Position so that center of image stays at center of viewport + offset
-  const displayW = imgNatural.w * transform.scale;
-  const displayH = imgNatural.h * transform.scale;
-
-  img.style.width = displayW + 'px';
-  img.style.height = displayH + 'px';
-  img.style.left = (vpW / 2 - displayW / 2 + transform.x) + 'px';
-  img.style.top  = (vpH / 2 - displayH / 2 + transform.y) + 'px';
-}
-
-/* Zoom */
-$('zoomSlider').addEventListener('input', (e) => {
-  const newScale = parseFloat(e.target.value);
-  transform.scale = newScale;
-  applyTransform();
-});
-
-/* Pan - mouse */
-const viewport = $('cropViewport');
-viewport.addEventListener('mousedown', (e) => {
-  if (!$('cropImage').src) return;
-  isDragging = true;
-  lastPos = { x: e.clientX, y: e.clientY };
-  viewport.style.cursor = 'grabbing';
-});
-window.addEventListener('mousemove', (e) => {
-  if (!isDragging) return;
-  const dx = e.clientX - lastPos.x;
-  const dy = e.clientY - lastPos.y;
-  transform.x += dx;
-  transform.y += dy;
-  lastPos = { x: e.clientX, y: e.clientY };
-  applyTransform();
-});
-window.addEventListener('mouseup', () => {
-  isDragging = false;
-  viewport.style.cursor = 'grab';
-});
-
-/* Pan - touch */
-viewport.addEventListener('touchstart', (e) => {
-  if (!$('cropImage').src || e.touches.length !== 1) return;
-  isDragging = true;
-  lastPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-}, { passive: true });
-viewport.addEventListener('touchmove', (e) => {
-  if (!isDragging || e.touches.length !== 1) return;
-  const dx = e.touches[0].clientX - lastPos.x;
-  const dy = e.touches[0].clientY - lastPos.y;
-  transform.x += dx;
-  transform.y += dy;
-  lastPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  applyTransform();
-}, { passive: true });
-viewport.addEventListener('touchend', () => { isDragging = false; });
-
-/* Wheel zoom */
-viewport.addEventListener('wheel', (e) => {
-  if (!$('cropImage').src) return;
-  e.preventDefault();
-  const delta = e.deltaY > 0 ? -0.08 : 0.08;
-  let newScale = Math.min(4, Math.max(0.5, transform.scale + delta));
-  transform.scale = newScale;
-  $('zoomSlider').value = newScale;
-  applyTransform();
-}, { passive: false });
-
-/* ---------- Process (Canvas + Quality Loop) ---------- */
-$('processBtn').addEventListener('click', async () => {
-  if (!currentDoc || !$('cropImage').src) return;
-
-  const tw = currentDoc._tw;
-  const th = currentDoc._th;
-  const canvas = document.createElement('canvas');
-  canvas.width = tw;
-  canvas.height = th;
-  const ctx = canvas.getContext('2d');
-
-  // White background (important for signatures)
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, tw, th);
-
-  // Calculate the source rectangle from the current transform
-  const vp = $('cropViewport');
-  const vpW = vp.clientWidth;
-  const vpH = vp.clientHeight;
-
-  // The visible area of the image in natural coordinates
-  const scale = transform.scale;
-  const displayW = imgNatural.w * scale;
-  const displayH = imgNatural.h * scale;
-
-  // Top-left of the image relative to viewport
-  const imgLeft = vpW / 2 - displayW / 2 + transform.x;
-  const imgTop  = vpH / 2 - displayH / 2 + transform.y;
-
-  // The crop frame is the full viewport
-  // Source x/y in natural image space
-  const sx = (0 - imgLeft) / scale;
-  const sy = (0 - imgTop) / scale;
-  const sWidth = vpW / scale;
-  const sHeight = vpH / scale;
-
-  ctx.drawImage(
-    $('cropImage'),
-    sx, sy, sWidth, sHeight,
-    0, 0, tw, th
-  );
-
-  // Quality optimization loop
-  const minKB = currentDoc.min_size_kb ?? 5;
-  const maxKB = currentDoc.max_size_kb ?? 200;
-  let quality = 0.92;
-  let blob = null;
-  let sizeKB = 0;
-
-  for (let i = 0; i < 25; i++) {
-    blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', quality));
-    sizeKB = blob.size / 1024;
-
-    if (sizeKB > maxKB) {
-      quality = Math.max(0.1, quality - 0.06);
-    } else if (sizeKB < minKB && quality < 0.98) {
-      quality = Math.min(0.98, quality + 0.04);
-    } else {
-      break;
-    }
-  }
-
-  // Final safety: if still too big, force lower
-  while (sizeKB > maxKB && quality > 0.08) {
-    quality -= 0.05;
-    blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', quality));
-    sizeKB = blob.size / 1024;
-  }
-
-  processedBlob = blob;
-
-  // Show preview
-  const url = URL.createObjectURL(blob);
-  const preview = $('resultPreview');
-  preview.innerHTML = '';
-  const img = document.createElement('img');
-  img.src = url;
-  img.className = 'max-w-full max-h-64 object-contain';
-  img.alt = 'Processed output';
-  preview.appendChild(img);
-
-  const status = sizeKB >= minKB && sizeKB <= maxKB
-    ? `<span class="text-emerald-600 font-medium">✓ Within limits</span>`
-    : `<span class="text-amber-600 font-medium">⚠ Size adjusted as close as possible</span>`;
-
-  $('resultMeta').innerHTML = `
-    ${status}<br>
-    ${tw} × ${th} px &nbsp;•&nbsp; ${sizeKB.toFixed(1)} KB &nbsp;•&nbsp; Q≈${(quality * 100).toFixed(0)}%
-  `;
-
-  $('downloadBtn').disabled = false;
-});
-
-/* ---------- Download ---------- */
-$('downloadBtn').addEventListener('click', () => {
-  if (!processedBlob) return;
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(processedBlob);
-  const name = `${currentDoc._board.toLowerCase()}_${currentDoc._key}.jpg`;
-  a.download = name;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-});
-
-/* ---------- Full Specs Table ---------- */
-function renderFullSpecs() {
-  const container = $('specsContainer');
-  let html = '';
-  specsData.boards.forEach(board => {
-    html += `<div class="mb-6">
-      <h3 class="font-medium text-slate-800 mb-2">${board.name}</h3>
-      <table class="w-full text-sm text-left">
-        <thead class="bg-slate-50 text-slate-600">
-          <tr>
-            <th class="px-3 py-2 rounded-l-lg">Document</th>
-            <th class="px-3 py-2">Format</th>
-            <th class="px-3 py-2">Size (KB)</th>
-            <th class="px-3 py-2">Pixels</th>
-            <th class="px-3 py-2 rounded-r-lg">Notes</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100">`;
-    Object.entries(board.documents).forEach(([key, doc]) => {
-      const px = doc.target_width_px
-        ? `${doc.target_width_px}×${doc.target_height_px}`
-        : (doc.square ? `${doc.min_width_px}–${doc.max_width_px} (square)` : '—');
-      html += `<tr>
-        <td class="px-3 py-2 font-medium">${key.replace(/_/g, ' ')}</td>
-        <td class="px-3 py-2">${(doc.format || ['jpg']).join(', ').toUpperCase()}</td>
-        <td class="px-3 py-2">${doc.min_size_kb ?? '—'} – ${doc.max_size_kb ?? '—'}</td>
-        <td class="px-3 py-2">${px}</td>
-        <td class="px-3 py-2 text-slate-500">${doc.notes || '—'}</td>
-      </tr>`;
-    });
-    html += `</tbody></table></div>`;
-  });
-  container.innerHTML = html;
-}
-
-/* ---------- Language ---------- */
-function setLang(lang) {
-  currentLang = lang;
-  // Minimal i18n for key labels
-  if (lang === 'bn') {
-    $('label-board').textContent = 'পরীক্ষা বোর্ড';
-    $('label-doc').textContent = 'ডকুমেন্ট টাইপ';
-    $('crop-title').textContent = 'ক্রপ ও অ্যালাইন';
-    $('result-title').textContent = 'ফাইনাল আউটপুট';
-    $('specs-title').textContent = 'অফিসিয়াল স্পেসিফিকেশন ডাটাবেস';
-    $('hint-text').textContent = 'ড্র্যাগ করে প্যান করুন • স্ক্রল বা স্লাইডার দিয়ে জুম • হলুদ ফ্রেমের ভিতরে অ্যালাইন করুন';
-    $('mobile-hint').textContent = 'মোবাইলে: প্রিভিউ ছবিতে লং-প্রেস করে সেভ করুন';
-  } else {
-    $('label-board').textContent = 'Exam Board';
-    $('label-doc').textContent = 'Document Type';
-    $('crop-title').textContent = 'Crop & Align';
-    $('result-title').textContent = 'Final Output';
-    $('specs-title').textContent = 'Official Specifications Database';
-    $('hint-text').textContent = 'Drag to pan • Scroll or slider to zoom • Align face/signature inside the yellow frame';
-    $('mobile-hint').textContent = 'On mobile: long-press the preview image to save';
-  }
-}
-
-/* Init */
-loadSpecs();
-</script>
+  <script src="registry.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

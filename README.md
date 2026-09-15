@@ -1,74 +1,64 @@
-# India Government Jobs Photo & Signature Size Tool
+# Indian Government Exam Photo & Signature Resizer
 
-**Free online tool + complete official database** of photo and signature requirements for major Indian government job exams.
+**Free, private, client-side image cropper and resizer** for every major Central and State Government recruitment exam in India.
 
-Perfect for **cyber cafes**, **job aspirants**, and **exam form fillers**.
+Covers **SSC, RRB, UPSC, IBPS, NTA** plus **all 28 States and 8 Union Territories**.
 
-## Live Tool
+**Live demo:** [https://jmaity434.github.io/india-govt-jobs-photo-signature-tool/](https://jmaity434.github.io/india-govt-jobs-photo-signature-tool/)
 
-**[Open the Converter & Specs →](https://jmaity434.github.io/india-govt-jobs-photo-signature-tool/)**
+---
 
-## Supported Exam Boards
+## Why this tool exists
 
-| Board | Full Name |
-|-------|-----------|
-| **SSC** | Staff Selection Commission |
-| **RRB** | Railway Recruitment Board |
-| **UPSC** | Union Public Service Commission |
-| **IBPS** | Institute of Banking Personnel Selection (All Bank Exams) |
-| **WBPSC / WBP / KP** | West Bengal Public Service Commission |
-| **NTA** | National Testing Agency (NEET, JEE, CUET) |
+Millions of candidates face form rejection every year because of incorrect photo or signature dimensions and file sizes. This open-source tool gives cyber cafes and aspirants a single, reliable place to prepare compliant images offline and privately.
 
 ## Features
 
-- Exact official size, format, file size (KB) and DPI requirements
-- Pixel equivalents calculated at 200 DPI & 300 DPI
-- Free **client-side** photo & signature resizer (no upload to any server)
-- Automatic quality adjustment loop to meet exact KB limits
-- Works 100% offline after first load
-- Mobile-friendly
-- Structured data for Google, AI search engines (ChatGPT, Perplexity, Gemini, Claude, Grok etc.)
+- **100% client-side** – HTML5 Canvas + Blob API. Zero server uploads.
+- **Complete coverage** – Central boards + 28 States + 8 UTs.
+- **Dynamic capital backdrop** – Ambient cityscape of the selected state capital.
+- **Zoom & pan cropper** – Precise alignment with mouse, touch and wheel.
+- **Binary quality loop** – Automatically finds the highest quality JPEG that still fits the exact Min–Max KB range.
+- **Name & Date stamp** – Optional bottom banner for UPSC, Kerala PSC, MPPSC, TNPSC etc.
+- **Mobile-friendly** – Long-press preview to save when download is blocked.
+- **SEO / AEO / GEO ready** – Schema.org JSON-LD, answer-first FAQ, rich meta tags.
+- **No emojis** – Clean SVG icons only.
 
-## Why this tool?
+## Architecture
 
-Every year millions of candidates face rejection because of wrong photo/signature size. This repository maintains the **most accurate, up-to-date** specifications collected from official notifications and provides a free browser-based converter so anyone can prepare perfect images in seconds.
+| File | Role |
+|------|------|
+| `index.html` | Semantic structure, Tailwind, Schema.org, UI |
+| `registry.js` | Master specification database (Central + States + UTs) |
+| `app.js` | Crop engine, transform (rAF), binary compression, export |
 
-## SEO & AI Friendly Keywords
+### Canvas performance notes
 
-`SSC photo size`, `RRB signature size`, `UPSC photo requirements`, `IBPS photo signature size`, `NTA passport photo size`, `government job photo size India`, `cyber cafe photo signature tool`, `SSC CHSL photo size`, `RRB NTPC signature`, `bank exam photo size`, `photo signature converter for government jobs`
+- `requestAnimationFrame` throttles pan/zoom updates.
+- Opaque 2D context (`alpha: false`) for faster compositing.
+- `imageSmoothingQuality = 'high'` only at final render.
+- Binary search over quality (instead of linear steps) reduces `toBlob` calls.
 
-## Data Structure
+## Supported boards (summary)
 
-All specifications are available in machine-readable JSON:
+**Central:** SSC, RRB, UPSC, IBPS/SBI, NTA (NEET/JEE/CUET)
 
+**States:** Andhra Pradesh, Arunachal Pradesh, Assam, Bihar, Chhattisgarh, Goa, Gujarat, Haryana, Himachal Pradesh, Jharkhand, Karnataka, Kerala, Madhya Pradesh, Maharashtra, Manipur, Meghalaya, Mizoram, Nagaland, Odisha, Punjab, Rajasthan, Sikkim, Tamil Nadu, Telangana, Tripura, Uttar Pradesh, Uttarakhand, West Bengal
+
+**Union Territories:** Delhi (DSSSB), Jammu & Kashmir, Ladakh, Chandigarh, Puducherry, Andaman & Nicobar, Dadra & Nagar Haveli and Daman & Diu, Lakshadweep
+
+## Local development
+
+```bash
+git clone https://github.com/Jmaity434/india-govt-jobs-photo-signature-tool.git
+cd india-govt-jobs-photo-signature-tool
+# Open index.html in any modern browser (or use a simple static server)
+npx serve .
 ```
-data/specs.json
-```
 
-Example:
+## GitHub Pages
 
-```json
-{
-  "exam_board": "SSC",
-  "documents": {
-    "photo": {
-      "format": ["jpg", "jpeg"],
-      "min_size_kb": 20,
-      "max_size_kb": 50,
-      "target_width_px": 413,
-      "target_height_px": 531,
-      "dpi": 300
-    }
-  }
-}
-```
-
-## How the Converter Works
-
-1. Uses pure **HTML5 Canvas API** (no server, no data leaves your browser)
-2. Resizes to exact pixel dimensions
-3. Iteratively adjusts JPEG quality until file size falls inside the required KB range
-4. Instant download of ready-to-upload image
+Settings → Pages → Source: Deploy from branch → `main` → `/ (root)`
 
 ## License
 
@@ -76,4 +66,4 @@ MIT – free for personal and commercial use (including cyber cafes).
 
 ---
 
-Made with ❤️ for Indian job aspirants | Maintained by [Joy Maity](https://github.com/Jmaity434)
+Maintained by [Joy Maity](https://github.com/Jmaity434)
